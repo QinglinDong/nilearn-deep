@@ -409,13 +409,11 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
             memory=self.memory,
             memory_level=max(0, self.memory_level + 1),
             n_jobs=self.n_jobs)
-
         return data
 
     def fit(self, imgs, y=None, confounds=None):
-        data= self.prepare_data(self, imgs, y, confounds)
+        data= self.prepare_data(imgs, y, confounds)
         self._raw_fit(data)
-
         return self
 
     def _check_components_(self):
