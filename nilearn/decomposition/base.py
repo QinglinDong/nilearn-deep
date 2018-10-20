@@ -205,6 +205,7 @@ def _mask_and_reduce_single(masker,
                             memory_level=0,
                             random_state=None):
     """Utility function for multiprocessing from MaskReducer"""
+    print img
     this_data = masker.transform(img, confound)
     # Now get rid of the img as fast as possible, to free a
     # reference count on it, and possibly free the corresponding
@@ -349,7 +350,7 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-    def prepare_data(self, imgs, y=None, confounds=None,reduction_ratio='auto'):
+    def prepare_data(self, imgs, y=None, confounds=None, reduction_ratio='auto'):
         """Compute the mask and the components across subjects
 
         Parameters
@@ -412,9 +413,7 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
             n_jobs=self.n_jobs)
         return data
 
-    def fit(self, imgs, y=None, confounds=None):
-        data= self.prepare_data(imgs, y, confounds)
-        print data.shape
+    def fit(self, data):
         self._raw_fit(data)
         return self
 
@@ -460,7 +459,7 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
 
     def inverse_transform(self, loadings):
         """Use provided loadings to compute corresponding linear component
-        combination in whole-brain voxel space
+        combination in whole-brain voixel space
 
         Parameters
         ----------
