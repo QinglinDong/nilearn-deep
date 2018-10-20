@@ -349,7 +349,7 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-    def prepare_data(self, imgs, y=None, confounds=None):
+    def prepare_data(self, imgs, y=None, confounds=None,reduction_ratio='auto'):
         """Compute the mask and the components across subjects
 
         Parameters
@@ -404,6 +404,7 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
             print("[{0}] Loading data".format(self.__class__.__name__))
         data = mask_and_reduce(
             self.masker_, imgs, confounds=confounds,
+            reduction_ratio=reduction_ratio,
             n_components=self.n_components,
             random_state=self.random_state,
             memory=self.memory,
