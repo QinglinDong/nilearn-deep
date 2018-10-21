@@ -1,8 +1,6 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 
 # Inspired from https://gist.github.com/myme5261314/005ceac0483fc5a581cc
-__author__ = 'Qinglin Dong'
+#__author__ = 'Qinglin Dong'
 
 import os
 #os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -17,6 +15,8 @@ def sample_gaussian(x, sigma=0.01):
     return x + tf.random_normal(tf.shape(x), mean=0.0, stddev=sigma, dtype=tf.float32)
 
 class RBM():
+
+
     def __init__(self, visible_size, hidden_size,
                  lr = 0.01, epochs = 20,
                  batchsize = 5, weight_decay_rate = 0.1):
@@ -42,7 +42,7 @@ class RBM():
         self.v1 = sample_gaussian(self._v1)
         self.h1 = tf.nn.sigmoid(tf.matmul(self.v1, self.W) + self.hb)
 
-        self.w_pos_grad = tf.matmul(tf.transpose(self.X), h0)
+        self.w_pos_grad = tf.matmul(tf.transpose(self.X), self.h0)
         self.w_neg_grad = tf.matmul(tf.transpose(self.v1), self.h1)
 
         self.CD = (self.w_pos_grad - self.w_neg_grad) / tf.to_float(tf.shape(self.X)[0])
