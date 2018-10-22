@@ -69,16 +69,16 @@ class RBM():
             for start, end in zip(range(0, len(data), self.batchsize), range(self.batchsize, len(data), self.batchsize)):
                 batch = data[start:end]
                 self.sess.run([self.update_W, self.update_vb, self.update_hb], feed_dict={self.X: batch})
-                if start % 10000 == 0:
-                    self.errors.append(self.sess.run(self.err, feed_dict={self.X: batch}))
+                #if start % 10000 == 0:
+                    #self.errors.append(self.sess.run(self.err, feed_dict={self.X: batch}))
                     # weight_decays.append(sess.run(self.l1))
                     # G.append(sess.run(tf.reduce_mean(tf.abs(self.update_W)),feed_dict={self.X: batch}))
                     # M=(sess.run(tf.reduce_max(self.W)))
             # print 'Epoch: %d' % epoch, 'Error: %f' % errors[-1], 'W mean: %f' % weight_decays[-1], 'W Gradient %f' % G[-1], 'W Max %f' % M
-            print 'Epoch: %d' % epoch, 'Error: %f' % self.errors[-1]
+            #print 'Epoch: %d' % epoch, 'Error: %f' % self.errors[-1]
+            print 'Epoch: %d' % epoch, 'Error: %f' % self.err
 
-            # rbmup inspired by https://github.com/myme5261314/dbn_tf/blob/master/rbm_tf.py
-
+    # rbmup inspired by https://github.com/myme5261314/dbn_tf/blob/master/rbm_tf.py
     def rbmup(self, data):
         h1 = (tf.matmul(self.X, self.W) + self.hb)
         a = self.sess.run(h1, feed_dict={self.X: data})
@@ -87,3 +87,6 @@ class RBM():
         h1 = sklearn.preprocessing.normalize(a)
         return h1
 
+    def getW(self):
+        self.sess.run(self.W)
+        return self
