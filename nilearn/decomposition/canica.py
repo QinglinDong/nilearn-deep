@@ -241,3 +241,35 @@ class CanICA(MultiPCA):
         components = MultiPCA._raw_fit(self, data)
         self._unmix_components(components)
         return self
+
+#from unmix_components
+    def thresholding(self,ica_maps):
+        ratio = None
+        if isinstance(self.threshold, float):
+            ratio = self.threshold
+        elif self.threshold == 'auto':
+            ratio = 1.
+        elif self.threshold is not None:
+            raise ValueError("Threshold must be None, "
+                             "'auto' or float. You provided %s." %
+                             str(self.threshold))
+        if ratio is not None:
+            abs_ica_maps = np.abs(ica_maps)
+            threshold = scoreatpercentile(
+                abs_ica_maps,
+                100. - (100. / len(ica_maps)) * ratio)
+            ica_maps[abs_ica_maps < threshold] = 0.
+        # We make sure that we keep the dtype of components
+        self.components_ = ica_maps.astype(self.components_.dtype)
+
+        # flip signs in each component so that peak is +ve
+        for component in self.components_:
+            if component.max() < -component.min():
+                component *= -1
+        if hasattr(self, "masker_"):
+            self.components_img_ = self.masker_.inverse_transform(self.components_)
+    def _check_components_(self):
+        if not hasattr(self, 'components_'):
+            raise ValueError("Object has no components_ attribute. "
+                             "This is probably because fit has not "
+                             "been called.")

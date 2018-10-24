@@ -417,12 +417,6 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
         self._raw_fit(data)
         return self
 
-    def _check_components_(self):
-        if not hasattr(self, 'components_'):
-            raise ValueError("Object has no components_ attribute. "
-                             "This is probably because fit has not "
-                             "been called.")
-
     def transform(self, imgs, confounds=None):
         """Project the data into a reduced representation
 
