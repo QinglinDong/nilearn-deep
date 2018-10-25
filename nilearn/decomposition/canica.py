@@ -260,14 +260,14 @@ class CanICA(MultiPCA):
                 100. - (100. / len(ica_maps)) * ratio)
             ica_maps[abs_ica_maps < threshold] = 0.
         # We make sure that we keep the dtype of components
-        self.components_ = ica_maps.astype(self.components_.dtype)
+        #self.components_ = ica_maps.astype(self.components_.dtype)
 
         # flip signs in each component so that peak is +ve
-        for component in self.components_:
+        for component in ica_maps:
             if component.max() < -component.min():
                 component *= -1
         if hasattr(self, "masker_"):
-            self.components_img_ = self.masker_.inverse_transform(self.components_)
+            return self.masker_.inverse_transform(ica_maps)
     def _check_components_(self):
         if not hasattr(self, 'components_'):
             raise ValueError("Object has no components_ attribute. "
