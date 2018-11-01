@@ -205,7 +205,7 @@ def _mask_and_reduce_single(masker,
                             memory_level=0,
                             random_state=None):
     """Utility function for multiprocessing from MaskReducer"""
-    print img
+    print(img)
     this_data = masker.transform(img, confound)
     # Now get rid of the img as fast as possible, to free a
     # reference count on it, and possibly free the corresponding

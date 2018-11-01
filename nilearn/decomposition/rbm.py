@@ -76,7 +76,9 @@ class RBM():
                     # M=(sess.run(tf.reduce_max(self.W)))
             # print 'Epoch: %d' % epoch, 'Error: %f' % errors[-1], 'W mean: %f' % weight_decays[-1], 'W Gradient %f' % G[-1], 'W Max %f' % M
             #print 'Epoch: %d' % epoch, 'Error: %f' % self.errors[-1]
-            print 'Epoch: %d' % epoch, 'Error: %f' % self.err
+
+
+            #print 'Epoch: %d' % epoch, 'Error: %f' % self.err
 
     # rbmup inspired by https://github.com/myme5261314/dbn_tf/blob/master/rbm_tf.py
     def rbmup(self, data):
