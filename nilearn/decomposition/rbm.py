@@ -90,5 +90,5 @@ class RBM():
         return h1
 
     def getW(self):
-        self.sess.run(self.W)
-        return self
+        W=self.sess.run(self.W)
+        return W

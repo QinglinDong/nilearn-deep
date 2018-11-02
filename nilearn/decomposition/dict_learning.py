@@ -265,7 +265,7 @@ class DictLearning(BaseDecomposition):
         # Unit-variance scaling
         S = np.sqrt(np.sum(self.components_ ** 2, axis=1))
         S[S == 0] = 1
-        self.components_ /= S[:, np.newaxis]
+       # self.components_ /= S[:, np.newaxis]
 
         # Flip signs in each composant so that positive part is l1 larger
         # than negative part. Empirically this yield more positive looking maps

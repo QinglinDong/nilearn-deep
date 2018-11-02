@@ -241,24 +241,49 @@ class CanICA(MultiPCA):
         components = MultiPCA._raw_fit(self, data)
         self._unmix_components(components)
         return self
+    def _raw_fit2(self, data):
+        """Helper function that directly process unmasked data.
 
+        Useful when called by another estimator that has already
+        unmasked data.
+
+        Parameters
+        ----------
+        data: ndarray or memmap
+            Unmasked data to process
+
+        """
+        components = MultiPCA._raw_fit(self, data)
+        random_state = check_random_state(self.random_state)
+
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=self.n_init)
+        # Note: fastICA is very unstable, hence we use 64bit on it
+        results = Parallel(n_jobs=self.n_jobs, verbose=self.verbose)(
+            delayed(self._cache(fastica, func_memory_level=2))
+            (components.astype(np.float64), whiten=True, fun='cube',
+             random_state=seed)
+            for seed in seeds)
+
+        ica_maps_gen_ = (result[2].T for result in results)
+        ica_maps_and_sparsities = ((ica_map,
+                                    np.sum(np.abs(ica_map), axis=1).max())
+                                   for ica_map in ica_maps_gen_)
+        ica_maps, _ = min(ica_maps_and_sparsities, key=itemgetter(-1))
+        return ica_maps
 #from unmix_components
     def thresholding(self,ica_maps):
-        ratio = None
-        if isinstance(self.threshold, float):
-            ratio = self.threshold
-        elif self.threshold == 'auto':
-            ratio = 1.
-        elif self.threshold is not None:
-            raise ValueError("Threshold must be None, "
-                             "'auto' or float. You provided %s." %
-                             str(self.threshold))
-        if ratio is not None:
-            abs_ica_maps = np.abs(ica_maps)
-            threshold = scoreatpercentile(
-                abs_ica_maps,
-                100. - (100. / len(ica_maps)) * ratio)
-            ica_maps[abs_ica_maps < threshold] = 0.
+        ratio=1
+        #ica_maps = ica_maps.T
+
+        S = np.sqrt(np.sum(ica_maps ** 2, axis=1))
+        S[S == 0] = 1
+        ica_maps /= S[:, np.newaxis]
+
+        abs_ica_maps = np.abs(ica_maps)
+        threshold = scoreatpercentile(
+            abs_ica_maps,
+            100. - (100. / len(ica_maps)) * ratio)
+        ica_maps[abs_ica_maps < threshold] = 0.
         # We make sure that we keep the dtype of components
         #ica_maps= ica_maps.astype(self.components_.dtype)
 

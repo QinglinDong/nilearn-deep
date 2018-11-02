@@ -4,5 +4,5 @@ variant of the ICA called Canonical ICA.
 """
 from .canica import CanICA
 from .dict_learning import DictLearning
-
-__all__ = ['CanICA', 'DictLearning']
+from .multi_pca import MultiPCA
+__all__ = ['CanICA', 'DictLearning','MultiPCA']
