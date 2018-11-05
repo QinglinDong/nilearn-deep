@@ -21,6 +21,7 @@ from sklearn.linear_model import Ridge
 from .base import BaseDecomposition
 from .canica import CanICA
 
+from scipy.stats import scoreatpercentile
 
 if LooseVersion(sklearn.__version__) >= LooseVersion('0.17'):
     # check_input=False is an optimization available only in sklearn >=0.17
@@ -277,3 +278,38 @@ class DictLearning(BaseDecomposition):
             self.components_img_ = self.masker_.inverse_transform(self.components_)
 
         return self
+    def _raw_fit2(self, data):
+
+        _, n_features = data.shape
+        n_iter = ((n_features - 1) // self.batch_size + 1) * self.n_epochs
+        self.components_, _ = self._cache(dict_learning_online)(
+            data.T, self.n_components, alpha=self.alpha, n_iter=n_iter,
+            batch_size=self.batch_size, method=self.method,
+            dict_init=None, verbose=max(0, self.verbose - 1),
+            random_state=self.random_state, return_code=True, shuffle=True,
+            n_jobs=1)
+        self.components_ = self.components_.T
+        return self
+
+
+    def thresholding(self,ica_maps):
+        ratio=1
+        #ica_maps = ica_maps.T
+
+        S = np.sqrt(np.sum(ica_maps ** 2, axis=1))
+        S[S == 0] = 1
+        ica_maps /= S[:, np.newaxis]
+
+        abs_ica_maps = np.abs(ica_maps)
+        threshold = scoreatpercentile(
+            abs_ica_maps,
+            100. - (100. / len(ica_maps)) * ratio)
+        ica_maps[abs_ica_maps < threshold] = 0.
+        # We make sure that we keep the dtype of components
+        #ica_maps= ica_maps.astype(self.components_.dtype)
+
+        # flip signs in each component so that peak is +ve
+        for component in ica_maps:
+            if component.max() < -component.min():
+                component *= -1
+        return ica_maps

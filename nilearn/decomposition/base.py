@@ -414,7 +414,10 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
         return data
 
     def fit(self, data):
+
+        self.prepare_data(data)
         self._raw_fit(data)
+
         return self
 
     def transform(self, imgs, confounds=None):
