@@ -389,6 +389,8 @@ class BaseDecomposition(BaseEstimator, CacheMixin, TransformerMixin):
             # it early and raise a helpful message
             raise ValueError('Need one or more Niimg-like objects as input, '
                              'an empty list was given.')
+
+        #MultiNiftiMasker
         self.masker_ = check_embedded_nifti_masker(self)
 
         # Avoid warning with imgs != None
