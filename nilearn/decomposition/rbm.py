@@ -7,6 +7,7 @@ import os
 
 import tensorflow as tf
 import numpy as np
+import sklearn.preprocessing
 
 def sample_bernoulli(probs):
     return tf.nn.relu(tf.sign(probs - tf.random_uniform(tf.shape(probs))))
@@ -81,11 +82,9 @@ class RBM():
             #print 'Epoch: %d' % epoch, 'Error: %f' % self.err
 
     # rbmup inspired by https://github.com/myme5261314/dbn_tf/blob/master/rbm_tf.py
-    def rbmup(self, data):
+    def predict(self, data):
         h1 = (tf.matmul(self.X, self.W) + self.hb)
         a = self.sess.run(h1, feed_dict={self.X: data})
-
-        import sklearn.preprocessing
         h1 = sklearn.preprocessing.normalize(a)
         return h1
 
