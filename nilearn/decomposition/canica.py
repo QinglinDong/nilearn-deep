@@ -171,15 +171,6 @@ class CanICA(MultiPCA):
             memory=memory, memory_level=memory_level,
             n_jobs=n_jobs, verbose=verbose)
 
-        if isinstance(threshold, float) and threshold > n_components:
-            raise ValueError("Threshold must not be higher than number "
-                             "of maps. "
-                             "Number of maps is %s and you provided "
-                             "threshold=%s" %
-                             (str(n_components), str(threshold)))
-        self.threshold = threshold
-        self.n_init = n_init
-
     def _unmix_components(self, components):
         """Core function of CanICA than rotate components_ to maximize
         independance"""
