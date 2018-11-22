@@ -261,6 +261,30 @@ class CanICA(MultiPCA):
                                    for ica_map in ica_maps_gen_)
         ica_maps, _ = min(ica_maps_and_sparsities, key=itemgetter(-1))
         return ica_maps
+    def _raw_fit3(self, data):
+        """Helper function that directly process unmasked data.
+
+        Useful when called by another estimator that has already
+        unmasked data.
+
+        Parameters
+        ----------
+        data: ndarray or memmap
+            Unmasked data to process
+
+        """
+        components = MultiPCA._raw_fit(self, data)
+        random_state = check_random_state(self.random_state)
+
+        seeds = random_state.randint(np.iinfo(np.int32).max, size=10)
+        # Note: fastICA is very unstable, hence we use 64bit on it
+        results = Parallel(n_jobs=self.n_jobs, verbose=self.verbose)(
+            delayed(self._cache(fastica, func_memory_level=2))
+            (components.astype(np.float64), whiten=True, fun='cube',
+             random_state=seed)
+            for seed in seeds)
+
+        return results
 #from unmix_components
     def thresholding(self,ica_maps):
         ratio=1
