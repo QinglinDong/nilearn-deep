@@ -1,7 +1,7 @@
 .. -*- mode: rst -*-
 
 
-nilearn-deep
+nilearn-deep(Deprecated)
 =======
 
 Forked from nilearn0.4.2.
@@ -12,3 +12,4 @@ pip3 install scipy matplotlib tensorflow-gpu keras
 pip3 uninstall nilearn
 
 pip3 install -e ./nilearn-deep
+
